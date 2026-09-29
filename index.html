@@ -1,603 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hwang Seo-hyun | 3D Environment Designer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-  :root {
-    --bg: #0b0c0d;
-    --bg-panel: #141618;
-    --bg-panel-2: #191c1f;
-    --line: #2a2d30;
-    --text: #ece8e0;
-    --text-dim: #8b9094;
-    --sand: #c9a876;
-    --sand-dim: #8f7a58;
-    --moss: #5c6f5f;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  .display, .section-title, .hero h1, .contact-cta h2 {
-    font-family: 'Oswald', 'Noto Sans KR', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  a { color: inherit; text-decoration: none; }
-  ::selection { background: var(--sand); color: #0b0c0d; }
-
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 22px 5vw;
-    background: linear-gradient(to bottom, rgba(11,12,13,.95), rgba(11,12,13,0));
-    backdrop-filter: blur(2px);
-  }
-
-  .logo {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: .15em;
-  }
-
-  nav a {
-    margin-left: 32px;
-    font-size: 13px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    transition: color .2s;
-  }
-  nav a:hover { color: var(--sand); }
-
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 5vw;
-    overflow: hidden;
-  }
-
-  .contour-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: .35;
-    pointer-events: none;
-  }
-
-  .hero-content { position: relative; z-index: 2; }
-
-  .eyebrow, .section-eyebrow {
-    font-family: 'Oswald', sans-serif;
-    color: var(--sand);
-    letter-spacing: .25em;
-  }
-
-  .eyebrow {
-    font-size: 13px;
-    letter-spacing: .35em;
-    margin-bottom: 22px;
-  }
-
-  .hero h1 {
-    font-weight: 700;
-    font-size: clamp(52px, 11vw, 150px);
-    line-height: .92;
-  }
-
-  .hero h1 .kr {
-    display: block;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-weight: 700;
-    font-size: .32em;
-    letter-spacing: .05em;
-    color: var(--text-dim);
-    margin-top: 18px;
-    text-transform: none;
-  }
-
-  .hero-role {
-    margin-top: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .tag {
-    font-size: 12px;
-    letter-spacing: .05em;
-    padding: 7px 14px;
-    border: 1px solid var(--line);
-    color: var(--text-dim);
-    border-radius: 2px;
-  }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 40px;
-    left: 5vw;
-    font-size: 11px;
-    letter-spacing: .2em;
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .scroll-hint .bar {
-    width: 1px;
-    height: 40px;
-    background: var(--line);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .scroll-hint .bar::after {
-    content: '';
-    position: absolute;
-    top: -40px; left: 0;
-    width: 100%; height: 40px;
-    background: var(--sand);
-    animation: scrollbar 1.8s ease-in-out infinite;
-  }
-
-  @keyframes scrollbar {
-    0% { top: -40px; }
-    60%, 100% { top: 40px; }
-  }
-
-  section {
-    padding: 130px 5vw;
-    position: relative;
-  }
-
-  .section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 24px;
-    margin-bottom: 56px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .section-eyebrow {
-    font-size: 12px;
-    margin-bottom: 10px;
-  }
-
-  .section-title {
-    font-weight: 700;
-    font-size: clamp(32px, 5vw, 56px);
-  }
-
-  .section-note {
-    color: var(--text-dim);
-    font-size: 13px;
-    max-width: 320px;
-    text-align: right;
-  }
-
-  /* 포트폴리오 이미지 */
-  .works-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    background: var(--line);
-  }
-
-  .work-card {
-    background: var(--bg-panel);
-    aspect-ratio: 4 / 3;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px dashed var(--line);
-  }
-
-  .work-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform .45s ease, opacity .3s ease;
-  }
-
-  .work-card:hover img {
-    transform: scale(1.04);
-    opacity: .78;
-  }
-
-  .work-info {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    padding: 42px 20px 18px;
-    background: linear-gradient(to top, rgba(0,0,0,.82), transparent);
-    pointer-events: none;
-  }
-
-  .work-info .label {
-    font-size: 12px;
-    letter-spacing: .1em;
-    color: var(--text);
-    text-transform: uppercase;
-  }
-
-  .loading, .empty {
-    grid-column: 1 / -1;
-    padding: 70px 20px;
-    text-align: center;
-    color: var(--text-dim);
-    background: var(--bg-panel);
-  }
-
-  .about-wrap {
-    display: grid;
-    grid-template-columns: 1.1fr .9fr;
-    gap: 60px;
-  }
-
-  .about-text p {
-    font-size: 17px;
-    color: var(--text-dim);
-    max-width: 520px;
-    margin-bottom: 16px;
-  }
-
-  .about-text strong {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .info-table { border-top: 1px solid var(--line); }
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
-    gap: 20px;
-  }
-
-  .info-row .k {
-    color: var(--sand-dim);
-    letter-spacing: .1em;
-    font-size: 11px;
-    text-transform: uppercase;
-    padding-top: 3px;
-  }
-
-  .info-row .v { text-align: right; }
-  .info-row .v a { border-bottom: 1px solid var(--line); }
-  .info-row .v a:hover {
-    color: var(--sand);
-    border-color: var(--sand);
-  }
-
-  .tools {
-    margin-top: 26px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .contact-cta {
-    text-align: center;
-    padding: 160px 5vw;
-    border-top: 1px solid var(--line);
-  }
-
-  .contact-cta .section-eyebrow {
-    justify-content: center;
-    display: block;
-  }
-
-  .contact-cta h2 {
-    font-weight: 700;
-    font-size: clamp(28px, 6vw, 60px);
-    margin: 18px 0 34px;
-  }
-
-  .mail-link {
-    display: inline-block;
-    font-size: 16px;
-    padding: 16px 34px;
-    border: 1px solid var(--sand-dim);
-    color: var(--sand);
-    letter-spacing: .05em;
-    transition: background .2s, color .2s;
-  }
-
-  .mail-link:hover {
-    background: var(--sand);
-    color: #0b0c0d;
-  }
-
-  footer {
-    text-align: center;
-    padding: 30px;
-    color: var(--text-dim);
-    font-size: 12px;
-    border-top: 1px solid var(--line);
-  }
-
-  /* 이미지 크게 보기 */
-  .modal {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    background: rgba(0,0,0,.92);
-  }
-
-  .modal.open { display: flex; }
-
-  .modal img {
-    max-width: 95vw;
-    max-height: 90vh;
-    object-fit: contain;
-  }
-
-  .modal-close {
-    position: fixed;
-    top: 20px;
-    right: 28px;
-    border: 0;
-    background: none;
-    color: white;
-    font-size: 36px;
-    cursor: pointer;
-    font-weight: 300;
-  }
-
-  @media (max-width: 780px) {
-    .works-grid { grid-template-columns: repeat(2, 1fr); }
-    .about-wrap { grid-template-columns: 1fr; }
-    .info-row .v, .tools {
-      text-align: left;
-      justify-content: flex-start;
-    }
-  }
-
-  @media (max-width: 520px) {
-    nav a { margin-left: 12px; font-size: 11px; }
-    .works-grid { grid-template-columns: 1fr; }
-    section { padding: 90px 5vw; }
-  }
-</style>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="황서현 3D Environment Artist 포트폴리오"><title>Hwang Seo-hyun | Environment Artist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#080909;--surface:#111313;--ink:#eeece5;--muted:#898b87;--line:#343735;--blue:#42a5e9}*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--ink);font-family:"JetBrains Mono","Noto Sans KR",monospace;overflow-x:hidden}a{color:inherit;text-decoration:none}button{font:inherit}
+    .topbar{height:65px;padding:0 clamp(22px,3vw,52px);display:flex;align-items:center;justify-content:space-between;position:absolute;z-index:5;inset:0 0 auto;border-bottom:1px solid #ffffff22}.brand{font:700 22px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em}.topbar nav{display:flex;gap:27px}.topbar nav a,.eyebrow,.meta,.project-count,footer{font-size:10px;letter-spacing:.11em}.topbar nav a:first-child,.eyebrow{color:var(--blue)}
+    .hero{min-height:100svh;position:relative;overflow:hidden;display:flex;align-items:end;padding:105px clamp(22px,3vw,52px) 36px;isolation:isolate;background:#090a0a url("portfolio/Sci-Fi%20Corridor/Sci-Fi%20Corridor_01.png") center/cover}.hero-video{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover}.hero:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,#0009,#00000017 75%),linear-gradient(0deg,#000c,transparent 58%)}.hero:after{content:"ENVIRONMENT ARTIST";position:absolute;z-index:-1;left:2vw;bottom:20%;font:900 clamp(55px,10.2vw,176px)/.78 "Barlow Condensed",sans-serif;letter-spacing:-.04em;color:#eeece521;white-space:nowrap}.eyebrow{margin-bottom:12px;font-weight:400}.hero h1{font:600 clamp(70px,11.5vw,185px)/.77 "Barlow Condensed",sans-serif;letter-spacing:-.04em}.hero h1 span{display:block}.hero-role{margin-top:24px;font-size:11px;letter-spacing:.16em}.hero-role b{color:var(--blue);margin:0 11px}.software{display:flex;flex-wrap:wrap;gap:7px;margin-top:44px}.software span,.tools span{border:1px solid #ffffff38;padding:8px 10px 7px;font-size:9px;color:#bdbdb7}.featured{position:absolute;right:clamp(22px,3vw,52px);bottom:39px;text-align:right}.featured .meta{color:var(--blue);margin-bottom:5px}.featured strong{font:600 clamp(26px,3vw,44px)/.85 "Barlow Condensed",sans-serif}
+    .works{padding:126px clamp(22px,2.4vw,46px) 70px}.section-heading{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;padding:0 clamp(0px,3.4vw,58px) 26px;border-bottom:1px solid var(--line)}.section-heading h2,.category-title{font:800 clamp(64px,10vw,148px)/.75 "Barlow Condensed",sans-serif;letter-spacing:-.035em}.project-count{text-align:right;color:var(--muted)}.section-note{grid-column:2;color:var(--muted);font-size:10px}.category{padding-top:67px}.category-header{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;padding:0 clamp(0px,3.4vw,58px) 20px}.category-kicker{color:var(--blue);font-size:10px;letter-spacing:.14em;margin-bottom:9px}.category-title{font-size:clamp(41px,6vw,87px)}.category-title i{font-style:normal;color:var(--blue)}.category-desc{text-align:right;color:var(--muted);font-size:11px;line-height:1.8;max-width:380px;justify-self:end}.material-section{margin-top:82px;padding-top:66px;border-top:1px solid var(--line)}.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-top:1px solid var(--line);background:var(--line)}.project{position:relative;aspect-ratio:1.38;overflow:hidden;border:0;background:#101111;color:var(--ink);cursor:pointer;text-align:left}.project img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s ease,filter .35s}.project:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#000d,transparent 60%)}.project:hover img{transform:scale(1.06);filter:brightness(.72)}.project-info{position:absolute;z-index:1;inset:auto 17px 15px;display:flex;justify-content:space-between;align-items:end;gap:12px}.project-date{display:block;color:var(--blue);font-size:9px;letter-spacing:.08em;margin-bottom:7px}.project-title{display:block;font:700 clamp(25px,3vw,46px)/.82 "Barlow Condensed",sans-serif;letter-spacing:.01em}.project-type{display:block;font-size:8px;color:#c5c6c1;margin-top:6px;letter-spacing:.06em}.project-num{font-size:10px;color:var(--blue)}#materialProjects{grid-template-columns:repeat(4,1fr)}#materialProjects .project{aspect-ratio:1}#materialProjects .project img{object-fit:contain;background:#101111}#materialProjects .project:hover img{transform:scale(1.025)}
+    .about{border-top:1px solid var(--line);padding:110px clamp(22px,6vw,104px) 92px;display:grid;grid-template-columns:1fr .86fr;gap:clamp(44px,9vw,150px);align-items:start}.about-label{color:var(--blue);font-size:10px;letter-spacing:.14em}.about-copy{max-width:700px;font:500 clamp(19px,2.15vw,31px)/1.62 "Noto Sans KR",sans-serif;letter-spacing:-.055em}.about-copy strong{color:#d6d4cc;font-weight:500}.intro-sub{max-width:670px;margin-top:23px;color:#b3b5ae;font:400 clamp(14px,1.25vw,18px)/1.75 "Noto Sans KR",sans-serif;letter-spacing:-.03em}.education{max-width:430px;margin-top:38px;padding-top:20px;border-top:1px solid var(--blue);font-size:12px;line-height:1.65}.education b{display:block;margin-bottom:8px;color:var(--blue);font-size:9px;letter-spacing:.13em}.education span{display:block;color:#d6d4cc;font-weight:600}.education small{display:block;color:var(--muted);font-size:10px}.profile-card{border:1px solid var(--line);padding:28px 38px 31px;background:linear-gradient(135deg,#111617,#0b0e0e)}.details{display:grid;grid-template-columns:1fr;border-top:1px solid var(--line)}.detail{display:grid;grid-template-columns:88px 1fr;gap:15px;padding:18px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5}.detail b{color:var(--muted);font-size:9px;letter-spacing:.1em}.tools{display:block;padding-top:32px;border:0}.tools b{display:block;color:var(--muted);font-size:9px;letter-spacing:.1em;margin-bottom:14px}.tools span{display:inline-block;margin:0 5px 7px 0}.email{border:0;padding:0;background:none;color:inherit;cursor:pointer;text-align:left;word-break:break-all}footer{padding:19px clamp(22px,3vw,52px);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted)}
+    .modal{position:fixed;z-index:20;inset:0;display:none;grid-template-rows:auto 1fr auto;padding:8px clamp(8px,1vw,18px);background:#050606fa}.modal.open{display:grid}.modal-top,.modal-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;font-size:10px;letter-spacing:.1em}.modal-close,.modal-nav{border:0;background:none;color:var(--ink);cursor:pointer}.modal-close{font:300 38px/1 sans-serif}.modal-visual{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(240px,18vw,310px);border:1px solid var(--line);background:#080a0a}.main-preview{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;background:#030404}.main-preview>img{width:100%;height:100%;display:block;object-fit:contain}.main-preview.material-preview>img{width:78%;height:78%}.modal-nav{position:absolute;z-index:2;top:50%;padding:18px;font-size:28px}.modal-prev{left:0}.modal-next{right:0}.project-detail{min-height:0;overflow-y:auto;padding:26px 20px;border-left:1px solid var(--line);background:linear-gradient(135deg,#101515,#080a0a)}.project-detail.material-detail .image-thumbnails{grid-template-columns:1fr;gap:8px}.project-detail.material-detail .modal-thumb img{aspect-ratio:1;object-fit:contain}.project-detail.material-detail .modal-thumb span{padding:5px 8px;font-size:10px;text-align:left}.detail-top{display:flex;justify-content:space-between;gap:12px;color:var(--blue);font-size:8px;letter-spacing:.12em}.detail-title{margin:11px 0 12px;font:700 clamp(31px,3vw,48px)/.8 "Barlow Condensed",sans-serif;letter-spacing:.02em}.detail-description{color:#c4c5be;font:400 12px/1.7 "Noto Sans KR",sans-serif;letter-spacing:-.025em}.detail-data{margin:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;display:grid;gap:9px;font-size:9px;color:var(--muted)}.detail-data span{display:inline-block;width:56px;color:var(--blue);font-size:8px;letter-spacing:.1em}.thumbnail-label{color:var(--muted);font-size:8px;letter-spacing:.12em;margin:16px 0 8px}.image-thumbnails{display:grid;gap:8px}.modal-thumb{position:relative;border:1px solid var(--line);padding:0;background:#070909;color:var(--ink);cursor:pointer;text-align:left}.modal-thumb.active{border-color:var(--blue)}.modal-thumb img{display:block;width:100%;aspect-ratio:1.55;object-fit:cover;filter:brightness(.78)}.modal-thumb.active img{filter:brightness(1)}.modal-thumb span{display:block;padding:7px 8px;font:600 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em}.copy-toast{position:fixed;z-index:30;left:50%;bottom:76px;transform:translate(-50%,18px);padding:13px 18px;border:1px solid var(--blue);box-shadow:0 8px 28px #0009;background:#121616;color:var(--ink);font-size:11px;letter-spacing:.1em;opacity:0;pointer-events:none;transition:.25s}.copy-toast.show{opacity:1;transform:translate(-50%,0)}.back-top{position:fixed;z-index:8;left:50%;bottom:22px;border:1px solid #ffffff55;background:#0b0e0eee;color:var(--ink);padding:11px 13px;font-size:9px;letter-spacing:.1em;cursor:pointer;opacity:0;transform:translate(-50%,12px);pointer-events:none;transition:.25s}.back-top.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+    @media(max-width:700px){.topbar{height:58px}.brand{font-size:19px}.hero{min-height:92svh;padding-bottom:27px}.hero h1{font-size:19vw}.hero:after{bottom:23%;font-size:16vw}.software{margin-top:31px;gap:5px}.software span{padding:6px;font-size:8px}.featured{display:none}.works{padding:80px 0 36px}.section-heading,.category-header{padding-left:22px;padding-right:22px}.section-heading{grid-template-columns:1fr}.section-note,.project-count{grid-column:auto;text-align:left}.category{padding-top:48px}.category-header{grid-template-columns:1fr;gap:12px}.category-desc{text-align:left;justify-self:start}.projects{grid-template-columns:repeat(2,1fr);gap:1px}.project{aspect-ratio:1}.project-info{inset:auto 10px 9px}.project-title{font-size:26px}.project-type{display:none}.about{padding:67px 22px;grid-template-columns:1fr;gap:45px}.about-copy{font-size:20px}.profile-card{padding:24px}.detail{grid-template-columns:75px 1fr;font-size:11px}.modal{padding:6px}.modal-visual{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto;overflow-y:auto}.main-preview{min-height:52vh}.main-preview>img{max-height:none}.project-detail{overflow:visible;border-left:0;border-top:1px solid var(--line);padding:20px}.image-thumbnails{grid-template-columns:repeat(2,1fr)}.back-top{left:50%;right:auto;bottom:14px;transform:translate(-50%,12px)}.back-top.show{transform:translate(-50%,0)}footer{font-size:8px}}
+    .brand{font-size:18px}.topbar nav a,.eyebrow,.meta,.project-count,footer{font-size:8px}.hero h1{font-size:clamp(53px,8.7vw,140px)}.hero-role{font-size:9px}.software span{font-size:7px}.section-heading h2{font-size:clamp(51px,7.9vw,118px)}.category-title{font-size:clamp(33px,4.8vw,68px)}.category-kicker{font-size:8px}.category-desc{font-size:9px}.section-note{font-size:8px}.project-title{font-size:clamp(20px,2.25vw,34px)}.project-date,.project-num{font-size:7px}.project-type{font-size:6px}.modal-top,.modal-bottom{font-size:8px}.detail-title{font-size:clamp(25px,2.4vw,38px)}.detail-description{font-size:10px}.detail-data{font-size:7px}.modal-thumb span{font-size:11px}.profile-card{position:relative}.profile-card .details{padding-right:178px}.profile-photo{position:absolute;top:28px;right:28px;width:150px;height:220px;object-fit:cover;object-position:center;background:#050606;filter:grayscale(1) contrast(1.06)}.project.portrait img,.modal-thumb img,#modalImage{object-fit:contain!important;background:#030404}.project.portrait img{padding:8px}@media(max-width:700px){.brand{font-size:17px}.hero h1{font-size:15.5vw}.section-heading h2{font-size:clamp(47px,8vw,106px)}.category-title{font-size:36px}.project-title{font-size:21px}.profile-card .details{padding-right:145px}.profile-photo{top:24px;right:24px;width:120px;height:178px}}
+  </style>
 </head>
-
 <body>
-
-<header>
-  <div class="logo">HWANG SEO-HYUN</div>
-  <nav>
-    <a href="#works">Works</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
-
-<section class="hero">
-  <svg class="contour-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke="#c9a876" stroke-width="1">
-      <path d="M -50 650 Q 200 550 400 620 T 900 600 T 1300 650" opacity=".5"/>
-      <path d="M -50 700 Q 250 600 450 660 T 950 650 T 1300 700" opacity=".4"/>
-      <path d="M -50 750 Q 300 660 500 710 T 1000 700 T 1300 750" opacity=".3"/>
-      <path d="M -50 600 Q 180 500 380 560 T 880 540 T 1300 590" opacity=".25"/>
-      <path d="M -50 550 Q 220 460 420 510 T 920 490 T 1300 540" opacity=".18" stroke="#5c6f5f"/>
-    </g>
-  </svg>
-
-  <div class="hero-content">
-    <div class="eyebrow">3D ENVIRONMENT / BACKGROUND ART</div>
-    <h1>HWANG<br>SEO-HYUN<span class="kr">황서현 · 3D 배경 디자이너</span></h1>
-    <div class="hero-role">
-      <span class="tag">Environment Design</span>
-      <span class="tag">3D Background</span>
-      <span class="tag">World Building</span>
-    </div>
-  </div>
-
-  <div class="scroll-hint"><span class="bar"></span>SCROLL</div>
-</section>
-
-<section id="works">
-  <div class="section-head">
-    <div>
-      <div class="section-eyebrow">SELECTED WORKS</div>
-      <div class="section-title">WORKS</div>
-    </div>
-    <div class="section-note">포트폴리오 폴더의 이미지가 자동으로 표시됩니다.</div>
-  </div>
-
-  <div class="works-grid" id="worksGrid">
-    <div class="loading">WORKS LOADING...</div>
-  </div>
-</section>
-
-<section id="about">
-  <div class="section-head">
-    <div>
-      <div class="section-eyebrow">PROFILE</div>
-      <div class="section-title">ABOUT</div>
-    </div>
-  </div>
-
-  <div class="about-wrap">
-    <div class="about-text">
-      <p><strong>3D 배경 디자이너 황서현</strong>입니다.</p>
-      <p>공간과 지형, 분위기를 통해 이야기를 전달하는 3D 배경 작업을 하고 있습니다.</p>
-      <p>포트폴리오는 계속 업데이트될 예정입니다.</p>
-    </div>
-
-    <div>
-      <div class="info-table">
-        <div class="info-row"><span class="k">Name</span><span class="v">황서현 (Hwang Seo-hyun)</span></div>
-        <div class="info-row"><span class="k">Role</span><span class="v">3D Environment / Background Designer</span></div>
-        <div class="info-row"><span class="k">Email</span><span class="v"><a href="mailto:tmgy00054@gmail.com">tmgy00054@gmail.com</a></span></div>
-      </div>
-
-      <div class="tools">
-        <span class="tag">3D Modeling</span>
-        <span class="tag">Texturing</span>
-        <span class="tag">Lighting</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="contact" class="contact-cta">
-  <div class="section-eyebrow">GET IN TOUCH</div>
-  <h2>같이 이야기 나눠요</h2>
-  <a class="mail-link" href="mailto:tmgy00054@gmail.com">tmgy00054@gmail.com</a>
-</section>
-
-<footer>&copy; 2026 Hwang Seo-hyun. All Rights Reserved.</footer>
-
-<div class="modal" id="imageModal">
-  <button class="modal-close" id="modalClose" aria-label="닫기">&times;</button>
-  <img id="modalImage" src="" alt="">
-</div>
-
-<script>
-  /*
-    GitHub의 '포트폴리오' 폴더를 자동으로 읽어서
-    이미지 파일을 모두 WORKS에 표시합니다.
-    따라서 새 이미지를 폴더에 추가해도 index.html을 다시 수정할 필요가 없습니다.
-  */
-
-  const OWNER = "tmgy0054-gif";
-  const REPO = "tmgy0054-gif.github.io";
-  const FOLDER = "포트폴리오";
-
-  const worksGrid = document.getElementById("worksGrid");
-  const modal = document.getElementById("imageModal");
-  const modalImage = document.getElementById("modalImage");
-  const modalClose = document.getElementById("modalClose");
-
-  const imageExtensions = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
-
-  function naturalSort(a, b) {
-    return a.name.localeCompare(b.name, undefined, {
-      numeric: true,
-      sensitivity: "base"
-    });
-  }
-
-  async function loadPortfolio() {
-    const apiUrl =
-      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(FOLDER)}`;
-
-    try {
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
-      }
-
-      const files = await response.json();
-
-      const images = files
-        .filter(file => {
-          const name = file.name.toLowerCase();
-          return file.type === "file" &&
-                 imageExtensions.some(ext => name.endsWith(ext));
-        })
-        .sort(naturalSort);
-
-      worksGrid.innerHTML = "";
-
-      if (images.length === 0) {
-        worksGrid.innerHTML =
-          '<div class="empty">포트폴리오 폴더에서 이미지를 찾지 못했습니다.</div>';
-        return;
-      }
-
-      images.forEach((file, index) => {
-        const card = document.createElement("div");
-        card.className = "work-card";
-
-        const img = document.createElement("img");
-        img.src = file.download_url;
-        img.alt = `Portfolio Work ${String(index + 1).padStart(2, "0")}`;
-        img.loading = "lazy";
-
-        const info = document.createElement("div");
-        info.className = "work-info";
-
-        const label = document.createElement("span");
-        label.className = "label";
-        label.textContent =
-          `WORK ${String(index + 1).padStart(2, "0")}`;
-
-        info.appendChild(label);
-        card.appendChild(img);
-        card.appendChild(info);
-
-        card.addEventListener("click", () => {
-          modalImage.src = file.download_url;
-          modalImage.alt = img.alt;
-          modal.classList.add("open");
-          document.body.style.overflow = "hidden";
-        });
-
-        worksGrid.appendChild(card);
-      });
-
-    } catch (error) {
-      console.error(error);
-      worksGrid.innerHTML =
-        '<div class="empty">포트폴리오 이미지를 불러오지 못했습니다.<br>잠시 후 다시 확인해주세요.</div>';
-    }
-  }
-
-  function closeModal() {
-    modal.classList.remove("open");
-    modalImage.src = "";
-    document.body.style.overflow = "";
-  }
-
-  modalClose.addEventListener("click", closeModal);
-
-  modal.addEventListener("click", event => {
-    if (event.target === modal) closeModal();
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") closeModal();
-  });
-
-  loadPortfolio();
-</script>
-
+  <header class="topbar"><a class="brand" href="#top">SEO-HYUN HWANG</a><nav><a href="#works">WORK</a><a href="#about">ABOUT</a></nav></header>
+  <main id="top">
+    <section class="hero"><video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="portfolio/Sci-Fi%20Corridor/Sci-Fi%20Corridor_01.png"><source src="portfolio/Sci-Fi%20Corridor/1001.mp4" type="video/mp4"></video><div><p class="eyebrow">3D ENVIRONMENT ARTIST</p><h1>SEO HYUN-<span>HWANG</span></h1><p class="hero-role">REAL-TIME ENVIRONMENT <b>/</b> PROP ART <b>/</b> WORLD BUILDING</p><div class="software"><span>UE5</span><span>3DS MAX</span><span>MAYA</span><span>ZBRUSH</span><span>SUBSTANCE</span><span>MARMOSET</span></div></div><div class="featured"><p class="meta">FEATURED WORK</p><strong>SCI-FI CORRIDOR</strong></div></section>
+    <section class="works" id="works"><div class="section-heading"><h2>WORKS</h2><p class="project-count">13&nbsp;&nbsp;PROJECTS</p><p class="section-note">Click a work to open details.</p></div><div class="category"><div class="category-header"><div><p class="category-kicker">3D ENVIRONMENT / PROP PROJECTS</p><h3 class="category-title">ENVIRONMENT<br><i>/ STUDY</i></h3></div><p class="category-desc">공간의 분위기와 스케일을 설계하는 3D 환경 및 소품 작업입니다. 각 작품을 선택하면 전체 이미지를 확인할 수 있습니다.</p></div><div class="projects" id="projects"></div><div class="material-section"><div class="category-header"><div><p class="category-kicker">PROCEDURAL MATERIAL STUDIES</p><h3 class="category-title">SUBSTANCE<br><i>DESIGNER</i></h3></div><p class="category-desc">Substance Designer를 활용해 제작한 절차적 재질 스터디입니다.</p></div><div class="projects" id="materialProjects"></div></div></div></section>
+    <section class="about" id="about"><div><p class="about-label">ABOUT</p><p class="about-copy">좋은 3D 게임 환경은 단순한 배경을 넘어,<br><strong>플레이어가 자연스럽게 이야기를 발견하고 세계관에 몰입하도록 만드는 경험이라고 생각합니다.</strong></p><p class="intro-sub">공간의 구조와 동선, 빛의 흐름, 재질의 밀도와 작은 디테일까지 세심하게 설계합니다. 장면마다 고유한 분위기와 감정을 담아, 플레이어가 머무르고 탐험하고 싶어지는 3D 게임 환경을 제작합니다.</p><p class="education"><b>EDUCATION</b><span>2018–2021 · Department of Design</span><small>Far East University, Republic of Korea</small></p></div><div class="profile-card"><div class="details"><p class="detail"><b>NAME</b><span>황서현 / Hwang Seo-hyun</span></p><p class="detail"><b>ROLE</b><span>3D Environment Artist</span></p><p class="detail"><b>EMAIL</b><button class="email" id="emailCopy" type="button">tmgy0054@gmail.com</button></p><p class="detail"><b>BIRTH</b><span>1999.05</span></p><div class="tools"><b>TOOLS</b><span>3DS MAX</span><span>MAYA</span><span>ZBRUSH</span><span>SUBSTANCE PAINTER</span><span>UNREAL ENGINE 5</span><span>MARMOSET</span></div></div></div></section>
+  </main>
+  <footer><span>© 2026 Hwang Seo-hyun. All Rights Reserved.</span><span>ENVIRONMENT ARTIST · 3D MODELING · LIGHTING</span></footer>
+  <button class="back-top" id="backTop" type="button" aria-label="맨 위로 이동">BACK TO TOP ↑</button><div class="copy-toast" id="copyToast" role="status">EMAIL COPIED</div>
+  <div class="modal" id="modal" aria-modal="true" role="dialog" aria-label="작업 상세 보기"><div class="modal-top"><span id="modalTitle">PROJECT</span><button class="modal-close" id="modalClose" aria-label="닫기">×</button></div><div class="modal-visual"><div class="main-preview" id="mainPreview"><button class="modal-nav modal-prev" id="modalPrev" aria-label="이전 프로젝트">←</button><img id="modalImage" src="" alt=""><button class="modal-nav modal-next" id="modalNext" aria-label="다음 프로젝트">→</button></div><aside class="project-detail"><div class="detail-top"><span id="modalCategory">PROJECT</span><span id="modalProjectNumber"></span></div><h2 class="detail-title" id="modalDetailTitle">PROJECT</h2><p class="detail-description" id="modalDescription"></p><div class="detail-data"><p><span>TYPE</span><b id="modalDetailType"></b></p><p><span>DATE</span><b id="modalDate"></b></p><p><span>IMAGES</span><b id="modalImageTotal"></b></p></div><p class="thumbnail-label" id="thumbnailLabel">ALL IMAGES · SCROLL TO BROWSE</p><div class="image-thumbnails" id="modalThumbnails"></div></aside></div><div class="modal-bottom"><span id="modalType"></span><span id="modalCount"></span></div></div>
+  <script>
+    const rawProjects=[
+      ["Sci-Fi Corridor","Environment · 3D Background","portfolio/Sci-Fi Corridor","Sci-Fi Corridor_01.png","2025.09","Sci-Fi Corridor_01.png|Sci-Fi Corridor_02.png|Sci-Fi Corridor_03.png|Sci-Fi Corridor_04.png|Sci-Fi Corridor_05.png|Sci-Fi Corridor_06.png|Sci-Fi Corridor_07.png|Sci-Fi Corridor_08.png|Sci-Fi Corridor_09.png|Sci-Fi Corridor_10.png|Sci-Fi Corridor_11.png"],
+      ["Fire Place","Props · Environment","portfolio/Fire place","Fire Place_01.png","2026.03","Fire Place_01.png|Fire Place_02.png|Fire Place_03.png|Fire Place_04.png|Fire Place_05.png|Fire Place_06.png|Fire Place_07.png|Fire Place_08.png|Fire Place_09.png|Fire Place_10.png"],
+      ["Chair","Props · Interior","portfolio/Chair","Chair_05.png","2026","Chair_01.png|Chair_02.png|Chair_03.png|Chair_04.png|Chair_05.png"],
+      ["Knife","Props · Hard Surface","portfolio/Knife","Knife_01.png","2026","Knife_01.png|Knife_02.png|Knife_03.png|Knife_04.png|Knife_05.png|Knife_06.png"],
+      ["Rock Arch","Environment · Asset","portfolio/Rock_Arch","Rock Arch_01.jpg","2026","Rock Arch_01.jpg|Rock Arch_02.jpg|Rock Arch_03.jpg|Rock Arch_04.jpg"],
+      ["Movie Projector","Props · Vintage","portfolio/Movie Projecter","Movie Projector_01.png","2026","Movie Projector_01.png"],
+      ["Column","Props · Architecture","portfolio/Column","Column_01.png","2026","Column_01.png"],
+      ["Rock A","Environment · Asset","portfolio/Rock_A","Rock A_01.png","2026","Rock A_01.png"],
+      ["Rock B","Environment · Asset","portfolio/Rock_B","Rock B_01.jpg","2026","Rock B_01.jpg"]
+    ];
+    const rawMaterialProjects=[
+      ["Block","Procedural Material · Substance Designer","portfolio/SD","BLOCK.png","2026","BLOCK.png"],
+      ["Ornament","Procedural Material · Substance Designer","portfolio/SD","ORNAMENT.png","2026","ORNAMENT.png"],
+      ["Tile 01","Procedural Material · Substance Designer","portfolio/SD","TILE 01.png","2026","TILE 01.png"],
+      ["Tile 02","Procedural Material · Substance Designer","portfolio/SD","TILE 02.png","2026","TILE 02.png"]
+    ];
+    const descriptions={
+      "Sci-Fi Corridor":"미래형 우주선 내부를 주제로 제작한 환경 작업입니다. 하드 서피스 구조와 조명 대비를 통해 긴장감 있는 이동 공간을 구성했습니다.",
+      "Fire Place":"난로와 주변 소품의 질감, 라이팅을 중심으로 제작한 실내 환경 스터디입니다.",
+      "Chair":"형태와 소재의 균형을 연구한 가구 소품 모델링 작업입니다.",
+      "Knife":"하드 서피스 모델링과 금속 재질 표현에 집중한 소품 작업입니다.",
+      "Rock Arch":"자연 지형의 실루엣과 표면 디테일을 연구한 환경 에셋입니다.",
+      "Movie Projector":"빈티지 프로젝터의 구조와 재질을 재해석한 소품 작업입니다.",
+      "Column":"건축 구조물의 비례와 표면 마감을 표현한 환경 소품입니다.",
+      "Rock A":"게임 환경에 활용할 수 있는 암석 에셋 스터디입니다.",
+      "Rock B":"지형의 형태와 재질감을 관찰해 제작한 암석 에셋입니다.",
+      "Block":"절차적 노드 워크플로우로 제작한 블록 재질 스터디입니다.",
+      "Ornament":"반복 패턴과 표면 깊이를 활용한 절차적 장식 재질입니다.",
+      "Tile 01":"타일 표면의 균일한 구조와 미세한 변화를 구현한 재질입니다.",
+      "Tile 02":"색상 포인트와 타일 배열을 활용한 절차적 재질 스터디입니다."
+    };
+    const makeProjects=items=>items.map(([title,type,folder,cover,date,images])=>({title,type,folder,cover,date,images:images.split("|"),description:descriptions[title]||"공간의 분위기와 디테일을 연구한 3D 작업입니다."}));
+    const environmentProjects=makeProjects(rawProjects),materialProjects=makeProjects(rawMaterialProjects);let projects=[];
+    const grid=document.getElementById("projects"),materialGrid=document.getElementById("materialProjects"),modal=document.getElementById("modal"),mainPreview=document.getElementById("mainPreview"),image=document.getElementById("modalImage"),thumbnails=document.getElementById("modalThumbnails"),thumbnailLabel=document.getElementById("thumbnailLabel"),copyToast=document.getElementById("copyToast");let projectIndex=0,imageIndex=0,toastTimer,wheelLocked=false;const path=value=>encodeURI(value);
+    const imageExists=src=>new Promise(resolve=>{const probe=new Image();probe.onload=()=>resolve(true);probe.onerror=()=>resolve(false);probe.src=path(src)});
+    function addCards(list,target,offset=0){list.forEach((p,i)=>{const card=document.createElement("button");card.className="project";card.type="button";card.innerHTML=`<img src="${path(p.folder+"/"+p.cover)}" alt="${p.title}"><span class="project-info"><span><span class="project-date">${p.date}</span><span class="project-title">${p.title}</span><span class="project-type">${p.type}</span></span><span class="project-num">${String(i+offset+1).padStart(2,"0")}</span></span>`;const thumbnail=card.querySelector("img");thumbnail.onload=()=>card.classList.toggle("portrait",thumbnail.naturalHeight>thumbnail.naturalWidth);card.onclick=()=>open(i+offset);target.appendChild(card)})}
+    async function prepareProjects(){const all=[...environmentProjects,...materialProjects];await Promise.all(all.map(async p=>{const found=await Promise.all(p.images.map(file=>imageExists(`${p.folder}/${file}`)));p.images=p.images.filter((_,i)=>found[i]);if(!p.images.includes(p.cover))p.cover=p.images[0]}));const availableEnvironment=environmentProjects.filter(p=>p.images.length),availableMaterials=materialProjects.filter(p=>p.images.length);projects=[...availableEnvironment,...availableMaterials];addCards(availableEnvironment,grid);addCards(availableMaterials,materialGrid,availableEnvironment.length)}prepareProjects();
+    function isMaterial(p=projects[projectIndex]){return p?.type.includes("Substance")}function materialIndexes(){return projects.map((p,i)=>isMaterial(p)?i:-1).filter(i=>i>=0)}
+    function show(){const p=projects[projectIndex],material=isMaterial(p),materialList=materialIndexes(),count=material?`${String(materialList.indexOf(projectIndex)+1).padStart(2,"0")} / ${String(materialList.length).padStart(2,"0")}`:`${String(imageIndex+1).padStart(2,"0")} / ${String(p.images.length).padStart(2,"0")}`;modalPrev.hidden=projectIndex===0;modalNext.hidden=projectIndex===projects.length-1;mainPreview.classList.toggle("material-preview",material);document.querySelector(".project-detail").classList.toggle("material-detail",material);image.onerror=()=>{p.images.splice(imageIndex,1);if(!p.images.length){close();return}imageIndex=Math.min(imageIndex,p.images.length-1);show()};image.src=path(`${p.folder}/${p.images[imageIndex]}`);image.alt=`${p.title} 이미지 ${imageIndex+1}`;modalTitle.textContent=p.title;modalType.textContent=p.type;modalCount.textContent=count;modalCategory.textContent=material?"MATERIAL STUDY":"ENVIRONMENT STUDY";modalProjectNumber.textContent=material?count:`${String(projectIndex+1).padStart(2,"0")} / ${String(projects.length).padStart(2,"0")}`;modalDetailTitle.textContent=p.title;modalDescription.textContent=p.description;modalDetailType.textContent=p.type;modalDate.textContent=p.date;modalImageTotal.textContent=material?`${materialList.length} MATERIALS`:`${p.images.length} IMAGES`;thumbnails.innerHTML="";const list=material?materialList.map(i=>({project:projects[i],index:i})):p.images.map((file,i)=>({file,index:i}));list.forEach(item=>{const thumb=document.createElement("button");thumb.type="button";thumb.className=`modal-thumb${(material?item.index===projectIndex:item.index===imageIndex)?" active":""}`;const thumbFile=material?item.project.cover:item.file,thumbFolder=material?item.project.folder:p.folder,thumbTitle=material?item.project.title:`IMAGE ${String(item.index+1).padStart(2,"0")}`;thumb.innerHTML=`<img src="${path(`${thumbFolder}/${thumbFile}`)}" alt="${thumbTitle} 미리보기"><span>${thumbTitle}</span>`;thumb.onclick=()=>{if(material)open(item.index);else{imageIndex=item.index;show()}};thumbnails.appendChild(thumb)})}
+    function open(i){if(!projects[i])return;projectIndex=i;imageIndex=0;show();modal.classList.add("open");document.body.style.overflow="hidden"}function close(){modal.classList.remove("open");document.body.style.overflow="";image.src=""}function moveImage(d){const list=projects[projectIndex].images,nextIndex=imageIndex+d;if(nextIndex<0||nextIndex>=list.length)return;imageIndex=nextIndex;show()}function moveProject(d){const nextIndex=projectIndex+d;if(nextIndex<0||nextIndex>=projects.length)return;open(nextIndex)}function moveMaterial(d){const list=materialIndexes(),position=list.indexOf(projectIndex),nextIndex=list[position+d];if(nextIndex===undefined)return;open(nextIndex)}function showToast(){copyToast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>copyToast.classList.remove("show"),1800)}
+    modalClose.onclick=close;modalPrev.onclick=()=>moveProject(-1);modalNext.onclick=()=>moveProject(1);mainPreview.addEventListener("wheel",e=>{e.preventDefault();if(wheelLocked)return;wheelLocked=true;isMaterial()?moveMaterial(e.deltaY>0?1:-1):moveImage(e.deltaY>0?1:-1);setTimeout(()=>wheelLocked=false,180)},{passive:false});modal.onclick=e=>{if(e.target===modal)close()};document.addEventListener("keydown",e=>{if(!modal.classList.contains("open"))return;if(e.key==="Escape")close();if(e.key==="ArrowLeft")moveProject(-1);if(e.key==="ArrowRight")moveProject(1);if(e.key==="ArrowUp")isMaterial()?moveMaterial(-1):moveImage(-1);if(e.key==="ArrowDown")isMaterial()?moveMaterial(1):moveImage(1)});
+    emailCopy.onclick=async()=>{try{await navigator.clipboard.writeText("tmgy0054@gmail.com")}catch{const input=document.createElement("textarea");input.value="tmgy0054@gmail.com";document.body.append(input);input.select();document.execCommand("copy");input.remove()}showToast()};backTop.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});window.addEventListener("scroll",()=>backTop.classList.toggle("show",window.scrollY>window.innerHeight*.65));
+  </script>
+  <script>document.querySelector(".profile-card .details")?.insertAdjacentHTML("beforebegin",'<img class="profile-photo" src="portfolio/profile-photo.png" alt="황서현 프로필 사진">');</script>
 </body>
 </html>
